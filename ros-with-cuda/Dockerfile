@@ -46,4 +46,5 @@ WORKDIR /tmp/samples/1_Utilities/deviceQuery
 RUN make clean && make
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
+WORKDIR /
 CMD ["bash"]
