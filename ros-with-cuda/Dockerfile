@@ -22,8 +22,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/*
 
 # setup environment
-ENV LANG C.UTF-8 \
-    LC_ALL C.UTF-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
 # bootstrap rosdep
 RUN rosdep init \
@@ -31,6 +31,7 @@ RUN rosdep init \
 
 # install ros packages
 ENV ROS_DISTRO melodic
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \ 
     ros-melodic-ros-core=1.4.1-0* \
     ros-melodic-perception=1.4.1-0* \
