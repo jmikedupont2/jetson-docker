@@ -40,11 +40,6 @@ RUN apt-get update && apt-get install -y \
 # setup entrypoint
 COPY ./ros_entrypoint.sh /
 
-# building cuda
-COPY ./tmp/docker-build/samples /tmp/samples
-WORKDIR /tmp/samples/1_Utilities/deviceQuery
-RUN make clean && make
-
 ENTRYPOINT ["/ros_entrypoint.sh"]
 WORKDIR /
 CMD ["bash"]
