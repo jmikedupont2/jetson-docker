@@ -46,7 +46,7 @@ COPY ./ros_entrypoint.sh /
 # installing pytorch
 WORKDIR /tmp
 RUN wget https://nvidia.box.com/shared/static/6t52xry4x2i634h1cfqvc9oaoqfzrcnq.whl -O torch-1.3.0-cp27-cp27mu-linux_aarch64.whl && \
-    pip install torch-1.3.0-cp27-cp27mu-linux_aarch64.whl && \
+    pip install torch-1.3.0-cp27-cp27mu-linux_aarch64.whl torchvision && \
     rm -rf torch-1.3.0-cp27-cp27mu-linux_aarch64.whl
 
 # installing realsense
