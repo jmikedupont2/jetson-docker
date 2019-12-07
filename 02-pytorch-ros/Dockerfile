@@ -3,11 +3,13 @@ FROM nvcr.io/nvidia/l4t-base:r32.2
 MAINTAINER benson
 
 # setup timezone & install packages
+ENV DEBIAN_FRONTEND=noninteractive
 RUN echo 'Etc/UTC' > /etc/timezone && \
     ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
     apt-get update && \
     apt-get install -q -y tzdata dirmngr gnupg2 python-pip && \
     apt-get install -y --no-install-recommends make g++ && \
+    apt-get install -y libusb-1.0 gtk+-3.0 build-essential libglfw3-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -33,10 +35,10 @@ RUN rosdep init \
 
 # install ros packages
 ENV ROS_DISTRO melodic
-ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \ 
-    ros-melodic-ros-core=1.4.1-0* \
-    ros-melodic-perception=1.4.1-0* \
+    ros-${ROS_DISTRO}-ros-core=1.4.1-0* \
+    ros-${ROS_DISTRO}-perception=1.4.1-0* \
+    ros-${ROS_DISTRO}-rgbd-launch \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -49,10 +51,23 @@ RUN wget https://nvidia.box.com/shared/static/6t52xry4x2i634h1cfqvc9oaoqfzrcnq.w
     pip install torch-1.3.0-cp27-cp27mu-linux_aarch64.whl torchvision && \
     rm -rf torch-1.3.0-cp27-cp27mu-linux_aarch64.whl
 
+# set the version of the realsense library
+ENV LIBREALSENSE_VERSION 2.16.1
+#ENV LIBREALSENSE_ROS_VERSION 2.1.0
+RUN wget https://github.com/IntelRealSense/librealsense/archive/v${LIBREALSENSE_VERSION}.tar.gz && \
+    tar -xvzf v${LIBREALSENSE_VERSION}.tar.gz && \
+    rm v${LIBREALSENSE_VERSION}.tar.gz && \
+    mkdir -p librealsense-${LIBREALSENSE_VERSION}/build && \
+    cd librealsense-${LIBREALSENSE_VERSION}/build && \
+    cmake .. && \
+    make && \
+    make install && \
+    rm -rf librealsense-${LIBREALSENSE_VERSION}
+
 # installing realsense
-RUN git clone https://github.com/biomotion/installLibrealsense.git
-WORKDIR /tmp/installLibrealsense
-RUN ./installLibrealsense.sh
+#RUN git clone https://github.com/biomotion/installLibrealsense.git
+#WORKDIR /tmp/installLibrealsense
+#RUN ./installLibrealsense.sh
 
 
 ENTRYPOINT ["/ros_entrypoint.sh"]
